@@ -15,6 +15,8 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
 
       - name: Sync subfolder README to root
         run: cp ORmodule/README.md README.md
@@ -31,4 +33,4 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "docs: sync root README from ORmodule/README.md"
-          git push
+          git push origin HEAD:${{ github.ref_name }}
