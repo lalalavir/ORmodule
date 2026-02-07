@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <cuda_runtime.h>
 
@@ -6,10 +6,13 @@
 #include <stdexcept>
 #include <string>
 
-namespace orcore {
+namespace orcore
+{
 
-inline void cuda_check(cudaError_t status, const char* expr, const char* file, int line) {
-    if (status == cudaSuccess) {
+inline void cuda_check(cudaError_t status, const char* expr, const char* file, int line)
+{
+    if (status == cudaSuccess)
+    {
         return;
     }
 
@@ -21,7 +24,8 @@ inline void cuda_check(cudaError_t status, const char* expr, const char* file, i
     throw std::runtime_error(message.str());
 }
 
-inline void cuda_check_last_error(const char* file, int line) {
+inline void cuda_check_last_error(const char* file, int line)
+{
     cuda_check(cudaGetLastError(), "cudaGetLastError()", file, line);
 }
 
@@ -29,4 +33,3 @@ inline void cuda_check_last_error(const char* file, int line) {
 
 #define OR_CUDA_CHECK(expr) ::orcore::cuda_check((expr), #expr, __FILE__, __LINE__)
 #define OR_CUDA_CHECK_LAST() ::orcore::cuda_check_last_error(__FILE__, __LINE__)
-

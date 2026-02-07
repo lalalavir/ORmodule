@@ -8,11 +8,14 @@
 #include <ctime>
 #include <iostream>
 
-int main() {
-    try {
+int main() 
+{
+    try
+    {
         int device_count = 0;
         OR_CUDA_CHECK(cudaGetDeviceCount(&device_count));
-        if (device_count <= 0) {
+        if (device_count <= 0) 
+        {
             std::cerr << "[ORmodule] No CUDA device found." << std::endl;
             return 1;
         }
@@ -47,7 +50,9 @@ int main() {
         std::cout << "  mean: " << mean_value << std::endl;
         std::cout << "  status: OK" << std::endl;
         return 0;
-    } catch (const std::exception& error) {
+    }
+    catch (const std::exception& error)
+    {
         std::cerr << "[ORmodule] Fatal error: " << error.what() << std::endl;
         return 1;
     }

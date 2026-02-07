@@ -1,31 +1,35 @@
-#include "or/core/reduction.h"
+﻿#include "or/core/reduction.h"
 #include "or/core/cuda_check.h"
 
 #include <climits>
 #include <limits>
 #include <vector>
 
-namespace {
+namespace
+{
 
 __global__ void kernel_block_reduce_minmax_i32(const int* input,
-                                               int n,
-                                               int* block_min,
-                                               int* block_max,
-                                               long long* block_sum) {
+                                                int n,
+                                                int* block_min,
+                                                int* block_max,
+                                                long long* block_sum)
+{
     extern __shared__ int shared_i32[];
     int* smin = shared_i32;
     int* smax = shared_i32 + blockDim.x;
     long long* ssum = reinterpret_cast<long long*>(shared_i32 + 2 * blockDim.x);
 
     int index = blockIdx.x * blockDim.x + threadIdx.x;
-    int local_value = 0;
 
-    if (index < n) {
-        local_value = input[index];
+    if (index < n)
+    {
+        int local_value = input[index];
         smin[threadIdx.x] = local_value;
         smax[threadIdx.x] = local_value;
         ssum[threadIdx.x] = static_cast<long long>(local_value);
-    } else {
+    }
+    else
+    {
         smin[threadIdx.x] = INT_MAX;
         smax[threadIdx.x] = INT_MIN;
         ssum[threadIdx.x] = 0;
@@ -33,8 +37,10 @@ __global__ void kernel_block_reduce_minmax_i32(const int* input,
 
     __syncthreads();
 
-    for (int stride = blockDim.x / 2; stride > 0; stride >>= 1) {
-        if (threadIdx.x < stride) {
+    for (int stride = blockDim.x / 2; stride > 0; stride >>= 1)
+    {
+        if (threadIdx.x < stride)
+        {
             smin[threadIdx.x] = min(smin[threadIdx.x], smin[threadIdx.x + stride]);
             smax[threadIdx.x] = max(smax[threadIdx.x], smax[threadIdx.x + stride]);
             ssum[threadIdx.x] += ssum[threadIdx.x + stride];
@@ -42,7 +48,8 @@ __global__ void kernel_block_reduce_minmax_i32(const int* input,
         __syncthreads();
     }
 
-    if (threadIdx.x == 0) {
+    if (threadIdx.x == 0)
+    {
         block_min[blockIdx.x] = smin[0];
         block_max[blockIdx.x] = smax[0];
         block_sum[blockIdx.x] = ssum[0];
@@ -51,13 +58,16 @@ __global__ void kernel_block_reduce_minmax_i32(const int* input,
 
 }  // namespace
 
-namespace orcore {
+namespace orcore
+{
 
 void reduce_minmax_i32(const DeviceBuffer<int>& input,
-                      int* host_min,
-                      int* host_max,
-                      cudaStream_t stream) {
-    if (input.size() == 0) {
+                       int* host_min,
+                       int* host_max,
+                       cudaStream_t stream)
+{
+    if (input.size() == 0)
+    {
         *host_min = 0;
         *host_max = 0;
         return;
@@ -82,14 +92,18 @@ void reduce_minmax_i32(const DeviceBuffer<int>& input,
     int min_value = std::numeric_limits<int>::max();
     int max_value = std::numeric_limits<int>::min();
 
-    for (int value : host_block_min) {
-        if (value < min_value) {
+    for (int value : host_block_min)
+    {
+        if (value < min_value)
+        {
             min_value = value;
         }
     }
 
-    for (int value : host_block_max) {
-        if (value > max_value) {
+    for (int value : host_block_max)
+    {
+        if (value > max_value)
+        {
             max_value = value;
         }
     }
@@ -98,8 +112,10 @@ void reduce_minmax_i32(const DeviceBuffer<int>& input,
     *host_max = max_value;
 }
 
-double reduce_mean_i32(const DeviceBuffer<int>& input, cudaStream_t stream) {
-    if (input.size() == 0) {
+double reduce_mean_i32(const DeviceBuffer<int>& input, cudaStream_t stream)
+{
+    if (input.size() == 0)
+    {
         return 0.0;
     }
 
@@ -118,7 +134,8 @@ double reduce_mean_i32(const DeviceBuffer<int>& input, cudaStream_t stream) {
 
     std::vector<long long> host_block_sum = block_sum.copy_to_vector(stream);
     long long total_sum = 0;
-    for (long long value : host_block_sum) {
+    for (long long value : host_block_sum)
+    {
         total_sum += value;
     }
 

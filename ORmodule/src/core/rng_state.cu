@@ -1,30 +1,40 @@
-#include "or/core/rng_state.h"
+﻿#include "or/core/rng_state.h"
 #include "or/core/cuda_check.h"
 
-namespace {
+namespace
+{
 
-__global__ void kernel_init_rng(curandState* states, unsigned long long seed, int n) {
+__global__ void kernel_init_rng(curandState* states, unsigned long long seed, int n)
+{
     int index = blockIdx.x * blockDim.x + threadIdx.x;
-    if (index >= n) {
+    if (index >= n)
+    {
         return;
     }
+
     curand_init(seed, static_cast<unsigned long long>(index), 0ULL, &states[index]);
 }
 
-__global__ void kernel_fill_uniform_u32(curandState* states, unsigned int* output, int n) {
+__global__ void kernel_fill_uniform_u32(curandState* states, unsigned int* output, int n)
+{
     int index = blockIdx.x * blockDim.x + threadIdx.x;
-    if (index >= n) {
+    if (index >= n)
+    {
         return;
     }
+
     output[index] = curand(&states[index]);
 }
 
 }  // namespace
 
-namespace orcore {
+namespace orcore
+{
 
-void init_rng_states(DeviceBuffer<curandState>& states, unsigned long long seed, cudaStream_t stream) {
-    if (states.size() == 0) {
+void init_rng_states(DeviceBuffer<curandState>& states, unsigned long long seed, cudaStream_t stream)
+{
+    if (states.size() == 0)
+    {
         return;
     }
 
@@ -37,12 +47,15 @@ void init_rng_states(DeviceBuffer<curandState>& states, unsigned long long seed,
 
 void fill_uniform_u32(DeviceBuffer<curandState>& states,
                       DeviceBuffer<unsigned int>& output,
-                      cudaStream_t stream) {
-    if (states.size() == 0) {
+                      cudaStream_t stream)
+{
+    if (states.size() == 0)
+    {
         return;
     }
 
-    if (output.size() != states.size()) {
+    if (output.size() != states.size())
+    {
         output.allocate(states.size());
     }
 
@@ -54,4 +67,3 @@ void fill_uniform_u32(DeviceBuffer<curandState>& states,
 }
 
 }  // namespace orcore
-
