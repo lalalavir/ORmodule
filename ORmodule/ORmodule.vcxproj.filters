@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{0A161E5D-9EF5-4CE3-8B30-31A3A526F5C6}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Core">
+      <UniqueIdentifier>{A9BA6A99-D414-43F4-A85D-286246B688AF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{EFCFB4D4-25D1-4B67-91A6-5E5640C4DBD7}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Core">
+      <UniqueIdentifier>{27B36FD1-6F31-4D48-AD68-71B3C341D9D0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <CudaCompile Include="src\core\reduction.cu">
+      <Filter>Source Files\Core</Filter>
+    </CudaCompile>
+    <CudaCompile Include="src\core\rng_state.cu">
+      <Filter>Source Files\Core</Filter>
+    </CudaCompile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ClInclude Include="include\or\core\cuda_check.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\or\core\device_buffer.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\or\core\reduction.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\or\core\rng_state.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
+
