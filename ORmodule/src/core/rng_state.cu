@@ -4,6 +4,10 @@
 namespace
 {
 
+// Initialize curand states in parallel.
+//
+// Each thread owns one state and uses its global index as sequence number,
+// ensuring independent random streams for subsequent draws.
 __global__ void kernel_init_rng(curandState* states, unsigned long long seed, int n)
 {
     int index = blockIdx.x * blockDim.x + threadIdx.x;
@@ -15,6 +19,9 @@ __global__ void kernel_init_rng(curandState* states, unsigned long long seed, in
     curand_init(seed, static_cast<unsigned long long>(index), 0ULL, &states[index]);
 }
 
+// Generate one random uint32 value per state.
+//
+// The state is updated in place by curand().
 __global__ void kernel_fill_uniform_u32(curandState* states, unsigned int* output, int n)
 {
     int index = blockIdx.x * blockDim.x + threadIdx.x;
@@ -31,6 +38,8 @@ __global__ void kernel_fill_uniform_u32(curandState* states, unsigned int* outpu
 namespace orcore
 {
 
+// Host launcher for RNG state initialization.
+// Safe no-op when `states` is empty.
 void init_rng_states(DeviceBuffer<curandState>& states, unsigned long long seed, cudaStream_t stream)
 {
     if (states.size() == 0)
@@ -45,6 +54,8 @@ void init_rng_states(DeviceBuffer<curandState>& states, unsigned long long seed,
     OR_CUDA_CHECK_LAST();
 }
 
+// Host launcher for uniform uint32 generation.
+// Resizes `output` to match `states` when needed.
 void fill_uniform_u32(DeviceBuffer<curandState>& states,
                       DeviceBuffer<unsigned int>& output,
                       cudaStream_t stream)

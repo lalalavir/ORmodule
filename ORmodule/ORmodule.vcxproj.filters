@@ -15,6 +15,12 @@
     <Filter Include="Header Files\Core">
       <UniqueIdentifier>{27B36FD1-6F31-4D48-AD68-71B3C341D9D0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Engine">
+      <UniqueIdentifier>{EAF14831-26F9-4725-B286-221BDA1B7A3C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Problem">
+      <UniqueIdentifier>{B86A37A8-3D58-415D-BE04-0479CF252005}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 
   <ItemGroup>
@@ -45,6 +51,23 @@
     <ClInclude Include="include\or\core\rng_state.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="include\or\engine\run_config.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="include\or\engine\run_stats.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="include\or\engine\solver_engine.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="include\or\problem\problem_ops.h">
+      <Filter>Header Files\Problem</Filter>
+    </ClInclude>
+    <ClInclude Include="include\or\problem\problem_traits.h">
+      <Filter>Header Files\Problem</Filter>
+    </ClInclude>
+    <ClInclude Include="include\or\problem\mock_problem.h">
+      <Filter>Header Files\Problem</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
-

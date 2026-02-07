@@ -92,6 +92,12 @@
     <ClInclude Include="include\or\core\device_buffer.h" />
     <ClInclude Include="include\or\core\reduction.h" />
     <ClInclude Include="include\or\core\rng_state.h" />
+    <ClInclude Include="include\or\engine\run_config.h" />
+    <ClInclude Include="include\or\engine\run_stats.h" />
+    <ClInclude Include="include\or\engine\solver_engine.h" />
+    <ClInclude Include="include\or\problem\problem_ops.h" />
+    <ClInclude Include="include\or\problem\problem_traits.h" />
+    <ClInclude Include="include\or\problem\mock_problem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
