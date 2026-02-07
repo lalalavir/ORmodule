@@ -7,11 +7,14 @@
 namespace orcore
 {
 
-void reduce_minmax_i32(const DeviceBuffer<int>& input,
-                       int* host_min,
-                       int* host_max,
-                       cudaStream_t stream = 0);
+struct ReductionStatsI32
+{
+    int min_value = 0;
+    int max_value = 0;
+    long long sum_value = 0;
+    double mean_value = 0.0;
+};
 
-double reduce_mean_i32(const DeviceBuffer<int>& input, cudaStream_t stream = 0);
+ReductionStatsI32 reduce_stats_i32(const DeviceBuffer<int>& input, cudaStream_t stream = 0);
 
 }  // namespace orcore

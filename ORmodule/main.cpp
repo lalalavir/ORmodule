@@ -36,18 +36,15 @@ int main()
                                  sample_count * sizeof(unsigned int),
                                  cudaMemcpyDeviceToDevice));
 
-        int min_value = 0;
-        int max_value = 0;
-        orcore::reduce_minmax_i32(sample_values, &min_value, &max_value);
-        double mean_value = orcore::reduce_mean_i32(sample_values);
+        orcore::ReductionStatsI32 stats = orcore::reduce_stats_i32(sample_values);
 
         OR_CUDA_CHECK(cudaDeviceSynchronize());
 
         std::cout << "[ORmodule/Core Smoke Test]" << std::endl;
         std::cout << "  sample_count: " << sample_count << std::endl;
-        std::cout << "  min: " << min_value << std::endl;
-        std::cout << "  max: " << max_value << std::endl;
-        std::cout << "  mean: " << mean_value << std::endl;
+        std::cout << "  min: " << stats.min_value << std::endl;
+        std::cout << "  max: " << stats.max_value << std::endl;
+        std::cout << "  mean: " << stats.mean_value << std::endl;
         std::cout << "  status: OK" << std::endl;
         return 0;
     }

@@ -10,25 +10,30 @@
 namespace orcore
 {
 
+// RAII wrapper for a typed CUDA device allocation.
 template <typename T>
 class DeviceBuffer
 {
 public:
     DeviceBuffer() = default;
 
+    // Construct and allocate `count` elements.
     explicit DeviceBuffer(size_t count)
     {
         allocate(count);
     }
 
+    // Automatically releases device memory on scope exit.
     ~DeviceBuffer()
     {
         release();
     }
 
+    // Non-copyable: a device allocation has a single owner.
     DeviceBuffer(const DeviceBuffer&) = delete;
     DeviceBuffer& operator=(const DeviceBuffer&) = delete;
 
+    // Move support: transfer allocation ownership.
     DeviceBuffer(DeviceBuffer&& other) noexcept
     {
         move_from(other);
@@ -44,6 +49,8 @@ public:
         return *this;
     }
 
+    // Ensure capacity for `count` elements.
+    // Reallocates only when size changes or buffer is null.
     void allocate(size_t count)
     {
         if (count == count_ && data_ != nullptr)
@@ -62,6 +69,7 @@ public:
         count_ = count;
     }
 
+    // Free the owned CUDA buffer (safe to call repeatedly).
     void release()
     {
         if (data_ != nullptr)
@@ -72,6 +80,7 @@ public:
         }
     }
 
+    // Async memset to zero on the selected stream.
     void memset_zero(cudaStream_t stream = 0)
     {
         if (data_ == nullptr || count_ == 0)
@@ -82,6 +91,8 @@ public:
         OR_CUDA_CHECK(cudaMemsetAsync(data_, 0, bytes(), stream));
     }
 
+    // Async host-to-device copy.
+    // Auto-grows buffer when `count > size()`.
     void copy_from_host(const T* host_ptr, size_t count, cudaStream_t stream = 0)
     {
         if (count > count_)
@@ -92,16 +103,21 @@ public:
         OR_CUDA_CHECK(cudaMemcpyAsync(data_, host_ptr, count * sizeof(T), cudaMemcpyHostToDevice, stream));
     }
 
+    // Async device-to-host copy.
+    // Caller is responsible for stream synchronization if needed.
     void copy_to_host(T* host_ptr, size_t count, cudaStream_t stream = 0) const
     {
         OR_CUDA_CHECK(cudaMemcpyAsync(host_ptr, data_, count * sizeof(T), cudaMemcpyDeviceToHost, stream));
     }
 
+    // Convenience wrapper around `copy_from_host`.
     void copy_from_vector(const std::vector<T>& host_values, cudaStream_t stream = 0)
     {
         copy_from_host(host_values.data(), host_values.size(), stream);
     }
 
+    // Convenience wrapper that returns a host vector.
+    // This method synchronizes the provided stream before returning.
     std::vector<T> copy_to_vector(cudaStream_t stream = 0) const
     {
         std::vector<T> host_values(count_);
@@ -131,6 +147,7 @@ public:
     }
 
 private:
+    // Internal helper used by move ctor/assignment.
     void move_from(DeviceBuffer& other)
     {
         data_ = other.data_;
