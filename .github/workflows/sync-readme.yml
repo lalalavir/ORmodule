@@ -23,7 +23,7 @@ jobs:
 
       - name: Commit and push if changed
         run: |
-          git add README.md
+          git add -f README.md
 
           if git diff --cached --quiet; then
             echo "No README changes to commit"
